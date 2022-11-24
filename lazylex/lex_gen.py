@@ -33,11 +33,11 @@ class Analyser:
         self.aux[r"\W"] = list(set(self.aux[r"\P"]) - set(self.aux[r"\w"]))
         self.aux[r"\S"] = list(set(self.aux[r"\P"]) - set(self.aux[r"\s"]))
 
-    def add_aux(self, aux_name: str, aux_type: int, aux_str: str) -> None:
+    def add_aux(self, aux_name: str, aux_base: str, aux_type: int, aux_str: str) -> None:
         if aux_type == 0:
-            self.aux[aux_name] = list(aux_str)
+            self.aux[aux_name] = list(set(self.aux[aux_base]).union(set(aux_str)))
         elif aux_type == 1:
-            self.aux[aux_name] = list(set(self.aux[r"\P"]) - set(aux_str))
+            self.aux[aux_name] = list(set(self.aux[aux_base]) - set(aux_str))
 
     def add_rule(self, reg: str, eval_func: Callable[[str], Token]) -> None:
         words = reg_to_words.Analyser().analyse(reg)
@@ -74,17 +74,19 @@ if __name__ == "__main__":
 
     lex_filename = input("输入词法文件路径(xxx.lex)：\n")
     with open(lex_filename, "r", encoding="utf-8") as file:
-        # n = int(input("输入辅助规则数：\n"))
+        # n = int(input("输入新增辅助规则数：\n"))
         n = int(file.readline().strip("\t\n"))
         for i in range(n):
             # name = input("输入辅助名(形如 '\\x')：\n")
-            # aux_type = int(input("包括/除外？(0/1)\n"))
+            # aux_base = input("基于的辅助规则名：\n")
+            # aux_type = int(input("添加/删除？(0/1)\n"))
             # aux = input("输入辅助规则：\n")
             name = file.readline().strip("\t\n")
+            aux_bas = file.readline().strip("\t\n")
             aux_typ = int(file.readline().strip("\t\n"))
-            aux = file.readline().strip("\t\n")
-            print(f"辅助规则{i} {repr(name)} {['包括', '除外'][aux_typ]} {repr(aux)}")
-            analyser.add_aux(name, aux_typ, aux)
+            aux = str(list(map(reg_to_words.Analyser.escape, file.readline().strip("\t\n"))))
+            print(f"辅助规则{i} {repr(name)} 基于 {repr(aux_bas)} {['添加', '删除'][aux_typ]} {repr(aux)}")
+            analyser.add_aux(name, aux_bas, aux_typ, aux)
         # m = int(input("输入规则数：\n"))
         m = int(file.readline().strip("\t\n"))
         for i in range(m):

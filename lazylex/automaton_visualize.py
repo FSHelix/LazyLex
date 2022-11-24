@@ -17,4 +17,4 @@ def visualize(auto: Automaton) -> None:
         g.node(f"{idx[n]}", label)
     for e in auto.edges():
         g.edge(f"{idx[e.n1]}", f"{idx[e.n2]}", reg_to_words.Analyser.unescape(e.info))
-    g.view()
+    g.view(directory="./visualize")

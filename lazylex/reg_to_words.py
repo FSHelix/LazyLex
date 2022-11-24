@@ -9,6 +9,7 @@ class Analyser:
         r"\.": ".",
         r"\|": "|",
         r"\*": "*",
+        r"\\": "\\",
         r"\n": "\n",
         r"\t": "\t",
         r"\r": "\r",
@@ -17,7 +18,11 @@ class Analyser:
     }
 
     unescape_dict = {
-
+        "\n": r"\n",
+        "\t": r"\t",
+        "\r": r"\r",
+        "\f": r"\f",
+        "\v": r"\v"
     }
 
     @staticmethod
@@ -46,7 +51,7 @@ class Analyser:
     @staticmethod
     def unescape(ch: str) -> str:
         if ch in Analyser.unescape_dict:
-            return Analyser.unescape_dict[ch]
+            return "'" + Analyser.unescape_dict[ch] + "'"
         return repr(ch)
 
     @staticmethod
